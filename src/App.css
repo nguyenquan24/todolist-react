@@ -65,6 +65,11 @@ body {
   align-items: center;
 }
 
+.todo.completed label {
+  text-decoration: line-through;
+  color: #d9d9d9;
+}
+
 .todo .view {
   display: flex;
   align-items: center;

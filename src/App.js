@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState(() => {
+    const savedTodos = localStorage.getItem('todos');
+    return savedTodos ? JSON.parse(savedTodos) : [];
+  });
   const [inputValue, setInputValue] = useState('');
   const [filter, setFilter] = useState('All');
   const [editingIndex, setEditingIndex] = useState(null);
   const [editingValue, setEditingValue] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
 
   const handleAddTodo = (e) => {
     if (e.key === 'Enter' && inputValue.trim()) {
@@ -41,6 +48,10 @@ function App() {
       setTodos(newTodos);
       setEditingIndex(null);
     }
+  };
+
+  const handleEditBlur = () => {
+    setEditingIndex(null);
   };
 
   const filteredTodos = todos.filter(todo => {
@@ -80,6 +91,7 @@ function App() {
                     value={editingValue}
                     onChange={handleEditChange}
                     onKeyDown={(e) => handleEditSubmit(e, index)}
+                    onBlur={handleEditBlur}
                     autoFocus
                   />
                 ) : (
