@@ -1,23 +1,78 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [todos, setTodos] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [filter, setFilter] = useState('All');
+
+  const handleAddTodo = (e) => {
+    if (e.key === 'Enter' && inputValue.trim()) {
+      setTodos([...todos, { text: inputValue, completed: false }]);
+      setInputValue('');
+    }
+  };
+
+  const handleToggle = (index) => {
+    const newTodos = [...todos];
+    newTodos[index].completed = !newTodos[index].completed;
+    setTodos(newTodos);
+  };
+
+  const handleClearCompleted = () => {
+    setTodos(todos.filter(todo => !todo.completed));
+  };
+
+  const filteredTodos = todos.filter(todo => {
+    if (filter === 'All') return true;
+    if (filter === 'Active') return !todo.completed;
+    if (filter === 'Completed') return todo.completed;
+    return true;
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div className="todoapp">
+      <header className="header">
+        <h1>todos</h1>
+        <input
+          className="new-todo"
+          placeholder="What needs to be done?"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleAddTodo}
+          autoFocus
+        />
       </header>
+      <section className="main">
+        <ul className="todo-list">
+          {filteredTodos.map((todo, index) => (
+            <li key={index} className={`todo ${todo.completed ? 'completed' : ''}`}>
+              <div className="view">
+                <input
+                  className="toggle"
+                  type="checkbox"
+                  checked={todo.completed}
+                  onChange={() => handleToggle(index)}
+                />
+                <label>{todo.text}</label>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <footer className="footer">
+        <span className="todo-count">
+          <strong>{todos.filter(todo => !todo.completed).length}</strong> item left
+        </span>
+        <ul className="filters">
+          <li><button onClick={() => setFilter('All')} className={filter === 'All' ? 'selected' : ''}>All</button></li>
+          <li><button onClick={() => setFilter('Active')} className={filter === 'Active' ? 'selected' : ''}>Active</button></li>
+          <li><button onClick={() => setFilter('Completed')} className={filter === 'Completed' ? 'selected' : ''}>Completed</button></li>
+        </ul>
+        <button className="clear-completed" onClick={handleClearCompleted}>
+          Clear completed
+        </button>
+      </footer>
     </div>
   );
 }
