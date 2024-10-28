@@ -76,6 +76,15 @@ body {
   cursor: pointer;
 }
 
+.edit {
+  width: calc(100% - 40px);
+  padding: 10px;
+  font-size: 18px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
 .footer {
   padding: 10px 20px;
   height: 40px;

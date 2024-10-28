@@ -5,6 +5,8 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [filter, setFilter] = useState('All');
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editingValue, setEditingValue] = useState('');
 
   const handleAddTodo = (e) => {
     if (e.key === 'Enter' && inputValue.trim()) {
@@ -21,6 +23,24 @@ function App() {
 
   const handleClearCompleted = () => {
     setTodos(todos.filter(todo => !todo.completed));
+  };
+
+  const handleEdit = (index) => {
+    setEditingIndex(index);
+    setEditingValue(todos[index].text);
+  };
+
+  const handleEditChange = (e) => {
+    setEditingValue(e.target.value);
+  };
+
+  const handleEditSubmit = (e, index) => {
+    if (e.key === 'Enter' && editingValue.trim()) {
+      const newTodos = [...todos];
+      newTodos[index].text = editingValue;
+      setTodos(newTodos);
+      setEditingIndex(null);
+    }
   };
 
   const filteredTodos = todos.filter(todo => {
@@ -54,7 +74,17 @@ function App() {
                   checked={todo.completed}
                   onChange={() => handleToggle(index)}
                 />
-                <label>{todo.text}</label>
+                {editingIndex === index ? (
+                  <input
+                    className="edit"
+                    value={editingValue}
+                    onChange={handleEditChange}
+                    onKeyDown={(e) => handleEditSubmit(e, index)}
+                    autoFocus
+                  />
+                ) : (
+                  <label onDoubleClick={() => handleEdit(index)}>{todo.text}</label>
+                )}
               </div>
             </li>
           ))}
